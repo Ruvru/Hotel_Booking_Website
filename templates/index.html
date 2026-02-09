@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxStay - Luxury Hotel Booking</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-hotel"></i>
+                <span>LuxStay</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#hotels">Hotels</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="nav-buttons">
+                {% if current_user.is_authenticated %}
+                    <span class="user-greeting">Hi, {{ current_user.username }}!</span>
+                    <a href="{{ url_for('auth.logout') }}" class="btn-secondary">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn-secondary">Login</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn-primary">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">Discover Your Perfect Stay</h1>
+            <p class="hero-subtitle">Experience luxury and comfort in the world's finest hotels</p>
+
+            <!-- Search Box -->
+            <div class="search-box">
+                <div class="search-field">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <input type="text" placeholder="Where are you going?" id="destination">
+                </div>
+                <div class="search-field">
+                    <i class="fas fa-calendar"></i>
+                    <input type="date" id="checkin">
+                </div>
+                <div class="search-field">
+                    <i class="fas fa-calendar"></i>
+                    <input type="date" id="checkout">
+                </div>
+                <div class="search-field">
+                    <i class="fas fa-user"></i>
+                    <select id="guests">
+                        <option>1 Guest</option>
+                        <option>2 Guests</option>
+                        <option>3 Guests</option>
+                        <option>4+ Guests</option>
+                    </select>
+                </div>
+                <button class="btn-search">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hotels Section -->
+    <section class="hotels-section" id="hotels">
+        <div class="container">
+            <h2 class="section-title">Featured Hotels</h2>
+            <p class="section-subtitle">Handpicked luxury accommodations for your perfect getaway</p>
+
+            <div class="hotels-grid">
+                {% if hotels %}
+                    {% for hotel in hotels %}
+                    <div class="hotel-card">
+                        <div class="hotel-image">
+                            <img src="{{ hotel.image_url or 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800' }}" alt="{{ hotel.name }}">
+                            <div class="hotel-badge">{{ hotel.star_rating }}⭐</div>
+                        </div>
+                        <div class="hotel-info">
+                            <h3>{{ hotel.name }}</h3>
+                            <p class="hotel-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ hotel.city }}, {{ hotel.country }}
+                            </p>
+                            <p class="hotel-description">{{ hotel.description[:100] }}...</p>
+
+                            {% if hotel.rooms %}
+                            <div class="hotel-price">
+                                <span class="price-label">From</span>
+                                <span class="price">${{ hotel.rooms[0].price_per_night }}</span>
+                                <span class="price-period">/night</span>
+                            </div>
+                            {% endif %}
+
+                        <button class="btn-view-rooms" onclick="window.location.href='/hotel/{{ hotel.id }}'">
+                                View Rooms <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-hotels">
+                        <i class="fas fa-hotel"></i>
+                        <p>No hotels available. Add some hotels to get started!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-hotel"></i>
+                    <h3>{{ hotels|length }}</h3>
+                    <p>Hotels Available</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-bed"></i>
+                    <h3>{{ rooms|length }}</h3>
+                    <p>Rooms Listed</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <h3>{{ users|length }}</h3>
+                    <p>Happy Customers</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calendar-check"></i>
+                    <h3>{{ bookings|length }}</h3>
+                    <p>Bookings Made</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>Why Choose LuxStay?</h2>
+                    <p>We provide the most luxurious hotel booking experience with handpicked accommodations worldwide.</p>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check-circle"></i> Best Price Guarantee</li>
+                        <li><i class="fas fa-check-circle"></i> 24/7 Customer Support</li>
+                        <li><i class="fas fa-check-circle"></i> Secure Payment</li>
+                        <li><i class="fas fa-check-circle"></i> Easy Cancellation</li>
+                    </ul>
+                </div>
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800" alt="Luxury Hotel">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-hotel"></i> LuxStay</h3>
+                    <p>Your gateway to luxury accommodations worldwide.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#hotels">Hotels</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-phone"></i> +1 234 567 890</p>
+                    <p><i class="fas fa-envelope"></i> info@luxstay.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> New York, USA</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 LuxStay. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

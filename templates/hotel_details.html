@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ hotel.name }} - LuxStay</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/hotel_details.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-hotel"></i>
+                <span>LuxStay</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('main.home') }}">Home</a></li>
+                <li><a href="{{ url_for('main.home') }}#hotels">Hotels</a></li>
+                <li><a href="{{ url_for('main.home') }}#about">About</a></li>
+                <li><a href="{{ url_for('main.home') }}#contact">Contact</a></li>
+            </ul>
+            <div class="nav-buttons">
+                {% if current_user.is_authenticated %}
+                    <span class="user-greeting">Hi, {{ current_user.username }}!</span>
+                    <a href="{{ url_for('auth.logout') }}" class="btn-secondary">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn-secondary">Login</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn-primary">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hotel Header -->
+    <section class="hotel-header">
+        <div class="hotel-header-image">
+            <img src="{{ hotel.image_url }}" alt="{{ hotel.name }}">
+            <div class="hotel-header-overlay"></div>
+        </div>
+        <div class="hotel-header-content">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="{{ url_for('main.home') }}"><i class="fas fa-home"></i> Home</a>
+                    <span>/</span>
+                    <span>{{ hotel.name }}</span>
+                </div>
+                <h1>{{ hotel.name }}</h1>
+                <div class="hotel-meta">
+                    <span class="rating">{{ hotel.star_rating }}⭐</span>
+                    <span class="location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{ hotel.city }}, {{ hotel.country }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hotel Details -->
+    <section class="hotel-info-section">
+        <div class="container">
+            <div class="hotel-layout">
+                <!-- Left Column: Info -->
+                <div class="hotel-main-info">
+                    <div class="info-card">
+                        <h2><i class="fas fa-info-circle"></i> About This Hotel</h2>
+                        <p>{{ hotel.description }}</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h2><i class="fas fa-map-marker-alt"></i> Location</h2>
+                        <p><strong>Address:</strong> {{ hotel.address }}</p>
+                        <p><strong>City:</strong> {{ hotel.city }}</p>
+                        <p><strong>Country:</strong> {{ hotel.country }}</p>
+                    </div>
+
+                    {% if hotel.amenities %}
+                    <div class="info-card">
+                        <h2><i class="fas fa-concierge-bell"></i> Amenities</h2>
+                        <div class="amenities-grid">
+                            {% for amenity in hotel.amenities.split(',') %}
+                            <div class="amenity-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>{{ amenity.strip() }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Rooms Section -->
+                    <div class="info-card rooms-section">
+                        <h2><i class="fas fa-bed"></i> Available Rooms</h2>
+
+                        {% if rooms %}
+                        <div class="rooms-grid">
+                            {% for room in rooms %}
+                            <div class="room-card">
+                                <div class="room-image">
+                                    <img src="{{ room.image_url or 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800' }}" alt="{{ room.room_type }}">
+                                    <div class="room-availability">
+                                        {{ room.available_rooms }} rooms available
+                                    </div>
+                                </div>
+                                <div class="room-details">
+                                    <h3>{{ room.room_type }}</h3>
+                                    <p class="room-description">{{ room.description }}</p>
+
+                                    <div class="room-features">
+                                        <span><i class="fas fa-users"></i> Up to {{ room.capacity }} guests</span>
+                                    </div>
+
+                                    <div class="room-footer">
+                                        <div class="room-price">
+                                            <span class="price-amount">${{ room.price_per_night }}</span>
+                                            <span class="price-period">/night</span>
+                                        </div>
+                                        <button class="btn-book" onclick="bookRoom({{ room.id }})">
+                                            Book Now <i class="fas fa-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="no-rooms">
+                            <i class="fas fa-bed"></i>
+                            <p>No rooms available at the moment.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Right Column: Booking Widget -->
+                <div class="booking-sidebar">
+                    <div class="booking-widget">
+                        <h3>Reserve Your Stay</h3>
+                        <form class="booking-form">
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar"></i> Check-in</label>
+                                <input type="date" id="checkin" required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar"></i> Check-out</label>
+                                <input type="date" id="checkout" required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-users"></i> Guests</label>
+                                <select id="guests" required>
+                                    <option>1 Guest</option>
+                                    <option>2 Guests</option>
+                                    <option>3 Guests</option>
+                                    <option>4+ Guests</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-check-availability">
+                                Check Availability
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="contact-widget">
+                        <h4><i class="fas fa-phone"></i> Need Help?</h4>
+                        <p>Call us at:</p>
+                        <p class="contact-number">+1 234 567 890</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-hotel"></i> LuxStay</h3>
+                    <p>Your gateway to luxury accommodations worldwide.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{{ url_for('main.home') }}">Home</a></li>
+                        <li><a href="{{ url_for('main.home') }}#hotels">Hotels</a></li>
+                        <li><a href="{{ url_for('main.home') }}#about">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-phone"></i> +1 234 567 890</p>
+                    <p><i class="fas fa-envelope"></i> info@luxstay.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 LuxStay. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function bookRoom(roomId) {
+            alert('Booking system coming soon! Room ID: ' + roomId);
+        }
+
+        // Set minimum date for check-in (today)
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('checkin').setAttribute('min', today);
+
+        document.getElementById('checkin').addEventListener('change', function() {
+            const checkinDate = new Date(this.value);
+            checkinDate.setDate(checkinDate.getDate() + 1);
+            const minCheckout = checkinDate.toISOString().split('T')[0];
+            document.getElementById('checkout').setAttribute('min', minCheckout);
+        });
+    </script>
+</body>
+</html>

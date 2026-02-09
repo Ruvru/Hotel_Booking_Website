@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Room - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-hotel"></i>
+                <h2>LuxStay Admin</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-item">
+                    <i class="fas fa-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('admin.hotels') }}" class="nav-item">
+                    <i class="fas fa-hotel"></i>
+                    <span>Hotels</span>
+                </a>
+                <a href="{{ url_for('admin.rooms') }}" class="nav-item active">
+                    <i class="fas fa-bed"></i>
+                    <span>Rooms</span>
+                </a>
+                <a href="{{ url_for('main.home') }}" class="nav-item">
+                    <i class="fas fa-globe"></i>
+                    <span>View Website</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Add New Room</h1>
+                <a href="{{ url_for('admin.rooms') }}" class="btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Rooms
+                </a>
+            </header>
+
+            <!-- Add Room Form -->
+            <div class="content-section">
+                <form method="POST" class="admin-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="hotel_id"><i class="fas fa-hotel"></i> Select Hotel *</label>
+                            <select id="hotel_id" name="hotel_id" required>
+                                <option value="">Choose a hotel...</option>
+                                {% for hotel in hotels %}
+                                <option value="{{ hotel.id }}">{{ hotel.name }} - {{ hotel.city }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="room_type"><i class="fas fa-bed"></i> Room Type *</label>
+                            <input type="text" id="room_type" name="room_type" required
+                                   placeholder="e.g., Deluxe, Suite, Standard">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description"><i class="fas fa-align-left"></i> Description *</label>
+                        <textarea id="description" name="description" rows="3" required
+                                  placeholder="Describe the room..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="price_per_night"><i class="fas fa-dollar-sign"></i> Price per Night *</label>
+                            <input type="number" id="price_per_night" name="price_per_night"
+                                   step="0.01" min="0" required placeholder="150.00">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="capacity"><i class="fas fa-users"></i> Guest Capacity *</label>
+                            <input type="number" id="capacity" name="capacity" min="1" required placeholder="2">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="available_rooms"><i class="fas fa-door-open"></i> Available Rooms *</label>
+                            <input type="number" id="available_rooms" name="available_rooms"
+                                   min="0" required placeholder="10">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image_url"><i class="fas fa-image"></i> Image URL *</label>
+                        <input type="url" id="image_url" name="image_url" required
+                               placeholder="https://images.unsplash.com/photo-...">
+                        <small>Use Unsplash URLs for room images</small>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Create Room
+                        </button>
+                        <a href="{{ url_for('admin.rooms') }}" class="btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

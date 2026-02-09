@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Hotel - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-hotel"></i>
+                <h2>LuxStay Admin</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-item">
+                    <i class="fas fa-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('admin.hotels') }}" class="nav-item active">
+                    <i class="fas fa-hotel"></i>
+                    <span>Hotels</span>
+                </a>
+                <a href="{{ url_for('admin.rooms') }}" class="nav-item">
+                    <i class="fas fa-bed"></i>
+                    <span>Rooms</span>
+                </a>
+                <a href="{{ url_for('main.home') }}" class="nav-item">
+                    <i class="fas fa-globe"></i>
+                    <span>View Website</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Edit Hotel: {{ hotel.name }}</h1>
+                <a href="{{ url_for('admin.hotels') }}" class="btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Hotels
+                </a>
+            </header>
+
+            <!-- Edit Hotel Form -->
+            <div class="content-section">
+                <form method="POST" class="admin-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name"><i class="fas fa-hotel"></i> Hotel Name *</label>
+                            <input type="text" id="name" name="name" value="{{ hotel.name }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="star_rating"><i class="fas fa-star"></i> Star Rating *</label>
+                            <select id="star_rating" name="star_rating" required>
+                                <option value="3" {% if hotel.star_rating == 3 %}selected{% endif %}>3 Stars</option>
+                                <option value="4" {% if hotel.star_rating == 4 %}selected{% endif %}>4 Stars</option>
+                                <option value="5" {% if hotel.star_rating == 5 %}selected{% endif %}>5 Stars</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description"><i class="fas fa-align-left"></i> Description *</label>
+                        <textarea id="description" name="description" rows="4" required>{{ hotel.description }}</textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="address"><i class="fas fa-map-marker-alt"></i> Address *</label>
+                            <input type="text" id="address" name="address" value="{{ hotel.address }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="city"><i class="fas fa-city"></i> City *</label>
+                            <input type="text" id="city" name="city" value="{{ hotel.city }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="country"><i class="fas fa-flag"></i> Country *</label>
+                            <input type="text" id="country" name="country" value="{{ hotel.country }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image_url"><i class="fas fa-image"></i> Image URL *</label>
+                        <input type="url" id="image_url" name="image_url" value="{{ hotel.image_url }}" required>
+                        <small>Use Unsplash URLs for hotel images</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amenities"><i class="fas fa-concierge-bell"></i> Amenities *</label>
+                        <input type="text" id="amenities" name="amenities" value="{{ hotel.amenities }}" required>
+                        <small>Separate amenities with commas</small>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Update Hotel
+                        </button>
+                        <a href="{{ url_for('admin.hotels') }}" class="btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

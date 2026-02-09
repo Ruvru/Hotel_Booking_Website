@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Hotels - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-hotel"></i>
+                <h2>LuxStay Admin</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-item">
+                    <i class="fas fa-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('admin.hotels') }}" class="nav-item active">
+                    <i class="fas fa-hotel"></i>
+                    <span>Hotels</span>
+                </a>
+                <a href="{{ url_for('admin.rooms') }}" class="nav-item">
+                    <i class="fas fa-bed"></i>
+                    <span>Rooms</span>
+                </a>
+                <a href="{{ url_for('main.home') }}" class="nav-item">
+                    <i class="fas fa-globe"></i>
+                    <span>View Website</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Manage Hotels</h1>
+                <a href="{{ url_for('admin.add_hotel') }}" class="btn-primary">
+                    <i class="fas fa-plus"></i> Add New Hotel
+                </a>
+            </header>
+
+            <!-- Hotels Table -->
+            <div class="content-section">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Location</th>
+                                <th>Rating</th>
+                                <th>Rooms</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for hotel in hotels %}
+                            <tr>
+                                <td>{{ hotel.id }}</td>
+                                <td>
+                                    <img src="{{ hotel.image_url }}" alt="{{ hotel.name }}" class="table-img">
+                                </td>
+                                <td><strong>{{ hotel.name }}</strong></td>
+                                <td>{{ hotel.city }}, {{ hotel.country }}</td>
+                                <td>{{ hotel.star_rating }}⭐</td>
+                                <td>{{ hotel.rooms|length }}</td>
+                                <td>
+                                    <a href="{{ url_for('admin.edit_hotel', id=hotel.id) }}" class="btn-edit">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <a href="{{ url_for('admin.delete_hotel', id=hotel.id) }}"
+                                       class="btn-delete"
+                                       onclick="return confirm('Delete {{ hotel.name }}? This will also delete all its rooms!')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
